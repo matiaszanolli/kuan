@@ -50,7 +50,7 @@ function load_texture(type, name)
 	
 	if (! textures.wall[name])
 	{
-		var texture_dir = 'textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor') ? 'mip2/' : 'mip/');
+		var texture_dir = 'textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
 
 		textures.wall[name] = [];
 		if (mipmap_enabled)
@@ -276,17 +276,25 @@ function preprocess_map(ctx, h)
 				new_sector.floor = load_texture('floor', 'testfloor');
 			}
 
-			// Create the ceiling pattern (no textured version yet)
-			gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
-			c = colour_interpolate([ 0, 0, 0 ], sector.ceiling, sector.light);
-			c0 = array_to_rgba( colour_interpolate(c, [ 0, 0, 0 ], 0.3 ) );
-			c1 = array_to_rgba( c );
-			gradient.addColorStop(0, c0);
-			gradient.addColorStop(stop0, c0);
-			gradient.addColorStop(0.5, c1);
-			gradient.addColorStop(stop1, c1);
-			gradient.addColorStop(1, c1);
-			new_sector.ceiling = gradient;
+			// Create the floor pattern
+			if (! options_flags.textured_ceilings)
+			{
+				// Create the ceiling pattern (no textured version yet)
+				gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
+				c = colour_interpolate([ 0, 0, 0 ], sector.ceiling, sector.light);
+				c0 = array_to_rgba( colour_interpolate(c, [ 0, 0, 0 ], 0.3 ) );
+				c1 = array_to_rgba( c );
+				gradient.addColorStop(0, c0);
+				gradient.addColorStop(stop0, c0);
+				gradient.addColorStop(0.5, c1);
+				gradient.addColorStop(stop1, c1);
+				gradient.addColorStop(1, c1);
+				new_sector.ceiling = gradient;
+			}
+			else
+			{
+				new_sector.ceiling = load_texture('ceiling', '2_conc_celing01');
+			}
 		}
 		else
 		{
@@ -838,7 +846,7 @@ function on_map_loaded(ctx, h)
 	game_state = STATE_PLAYING;
 }
 
-window.addEventListener('load', function()
+$(document).ready(function()
 {
 	profiler_enabled = (document.getElementById('profile') !== null);
 
@@ -891,8 +899,7 @@ window.addEventListener('load', function()
 
 	// Allow resolution changes
 
-	window.change_res = function (new_w, new_h, ui_class)
-	{
+	window.change_res = function (new_w, new_h)	{
 		w = new_w;
 		h = new_h;
 		if (render_ctx != screen_ctx)
@@ -902,7 +909,6 @@ window.addEventListener('load', function()
 		}
 		document.getElementById('c').width = w;
 		document.getElementById('c').height = h;
-		document.getElementById('ui').setAttribute('class', ui_class);
 		preprocess_map(render_ctx, h);
 	};
 
@@ -1142,6 +1148,6 @@ window.addEventListener('load', function()
 	// Start the game
 	toggle_paused();
 
-}, false); // addEventListener
+}); // $(document).ready
 
 })(); // [end private]
