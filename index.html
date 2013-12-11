@@ -25,8 +25,14 @@
     <body>
         <div class="large-12 columns">
             <div class="row">
-                <div id="ui" class="large-10 large-offset-1 columns">
+                <div id="ui" class="large-10 columns">
                     <div id="uic" class="row panel">
+		                <div id="dc_container" style="position: absolute; opacity: 0.5">
+		                	<div class="row panel">
+		                		<h5>Minimap</h5>
+			                	<canvas id="dc"></canvas>
+		                	</div>
+		                </div>
                         <canvas id="c"></canvas>
                     </div>
                     <div id="help_fg" class="row panel">

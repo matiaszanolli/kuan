@@ -276,10 +276,10 @@ function preprocess_map(ctx, h)
 				new_sector.floor = load_texture('floor', 'testfloor');
 			}
 
-			// Create the floor pattern
+			// Create the ceiling pattern
 			if (! options_flags.textured_ceilings)
 			{
-				// Create the ceiling pattern (no textured version yet)
+				// #TODO: Not working yet
 				gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
 				c = colour_interpolate([ 0, 0, 0 ], sector.ceiling, sector.light);
 				c0 = array_to_rgba( colour_interpolate(c, [ 0, 0, 0 ], 0.3 ) );
@@ -615,7 +615,7 @@ function process_input(keys, dt)
 {
 	var walk_speed = 1.5;
 	var strafe_speed = walk_speed / 2;
-	var turn_speed = 1;
+	var turn_speed = 1.5;
 	var look_speed = 1;
 
 	if (keys[DOM_VK.LEFT])  { rotate_camera(-turn_speed*dt); } 
@@ -853,6 +853,8 @@ $(document).ready(function()
 	// Set up the graphics system
 
 	var screen_ctx = document.getElementById('c').getContext('2d');
+	
+	var screen_ui = $('#c');
 
 	var w = document.getElementById('c').width;
 	var h = document.getElementById('c').height;
@@ -1120,6 +1122,8 @@ $(document).ready(function()
 	}
 	else
 	{
+		// If no level is loaded, we load the first level
+		// TODO Levels ahould be loaded dynamically
 		load_from_file_store_async('map_test0',
 			function (obj)
 			{
