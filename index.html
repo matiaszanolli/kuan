@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Canvex test</title>
+            <link rel="stylesheet" href="css/canvex.css" />
+            <link rel="stylesheet" href="css/normalize.css" />
+            <script src="js/vendor/jquery.js"></script>
+            <script src="js/foundation/foundation.js"></script>
+            <script type="text/javascript" src="js/canvex/textures/sprites.js"></script>
+            <script type="text/javascript" src="js/canvex/textures.js"></script>
+            <script type="text/javascript" src="js/canvex/global.js"></script>
+            <script type="text/javascript" src="js/canvex/keys.js"></script>
+            <script type="text/javascript" src="js/canvex/json.js"></script>
+            <script type="text/javascript" src="js/canvex/io.js"></script>
+            <script type="text/javascript" src="js/canvex/profiler.js"></script>
+            <script type="text/javascript" src="js/canvex/maths.js"></script>
+            <script type="text/javascript" src="js/canvex/renderer.js"></script>
+            <script type="text/javascript" src="js/canvex/map0.js"></script>
+            <script type="text/javascript" src="js/canvex/mapsetup.js"></script>
+            <script type="text/javascript" src="js/canvex/ui.js"></script>
+            <script type="text/javascript" src="js/canvex/game.js"></script>
+        </head>
+    <body>
+        <div class="large-12 columns">
+            <div class="row">
+                <div id="ui" class="large-10 large-offset-1 columns">
+                    <div id="uic" class="row panel">
+                        <canvas id="c" ></canvas>
+                    </div>
+                    <div id="help_fg" class="row panel">
+                        Keys:
+                        <ul>
+                            <li><span class="key">Arrow keys</span> walk forwards, backwards, rotate</li>
+                            <li><span class="key">Space bar</span> jump</li>
+                            <li><span class="key"><tt>,</tt> and <tt>.</tt></span> strafe left and right</li>
+                            <li><span class="key"><tt>x</tt> and <tt>c</tt></span> strafe left and right</li>
+                            <li><span class="key">Page up, page down, home</span> look up, down, centre</li>
+                            <li><span class="key">Pause</span> pause</li>
+                        </ul>
+                    </div>
+                    <div id="debug" class="row panel">
+                        <b>Debug messages:</b>
+                        <input type="text" id="status" size="100"/>
+                    </div>
+                    <div class="row panel">
+                        <button id="pause">Pause</button>
+                        FPS: <span id="framerate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <link rel="stylesheet" href="css/foundation.css" />
+        <script>
+        $(document).ready(function(){
+            $(document).foundation();
+        });
+        </script>
+    </body>
+</html>

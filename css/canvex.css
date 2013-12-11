@@ -1,0 +1,49 @@
+#ui object, #ui canvas {
+    height: 100%;
+    width: 100%;
+}
+.ui_1280 .h0 {
+    height: 32px;
+}
+.ui_1280 .h1 {
+    height: 960px;
+}
+.ui_1280 .h2 {
+    height: 144px;
+}
+.ui_1280 .w0 {
+    width: 32px;
+}
+.ui_1280 .w1 {
+    width: 1280px;
+}
+.ui_640 .h0 {
+    height: 16px;
+}
+.ui_640 .h1 {
+    height: 480px;
+}
+.ui_640 .h2 {
+    height: 72px;
+}
+.ui_640 .w0 {
+    width: 16px;
+}
+.ui_640 .w1 {
+    width: 640px;
+}
+.ui_320 .h0 {
+    height: 8px;
+}
+.ui_320 .h1 {
+    height: 240px;
+}
+.ui_320 .h2 {
+    height: 36px;
+}
+.ui_320 .w0 {
+    width: 8px;
+}
+.ui_320 .w1 {
+    width: 320px;
+}
