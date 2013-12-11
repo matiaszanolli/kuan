@@ -15,7 +15,7 @@ var options_flags = {
 	opera_context: 0, // doesn't work
 	opera_hack: 1, // doesn't work either
 	double_buffer: 0,
-	textured_floors: 0 // only suitable for testing
+	textured_floors: 1 // only suitable for testing
 };
 
 // Set browser-dependent defaults
