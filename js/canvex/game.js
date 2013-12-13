@@ -982,6 +982,7 @@ $(document).ready(function()
 		
 			profile_report();
 			framerate_update();
+			write_status_data(status_data);
 		}
 		catch (e)
 		{
@@ -1009,6 +1010,8 @@ $(document).ready(function()
 
 	document.getElementById('pause').onclick = toggle_paused;
 
+	var status_data = {};
+
 	//////
 
 	// Set up input handlers
@@ -1019,6 +1022,8 @@ $(document).ready(function()
 		{
 			var x = e.clientX-this.offsetLeft;
 			var y = e.clientY-this.offsetTop;
+			status_data.mouse_x = x;
+			status_data.mouse_y = y;
 			x -= player.x*map_scale + map_shift_x + dctx.canvas.width/2;
 			y -= player.y*map_scale + map_shift_y + dctx.canvas.height/2;
 			var mag = Math.sqrt(x*x + y*y);

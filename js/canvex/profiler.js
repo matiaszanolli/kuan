@@ -112,3 +112,11 @@ function framerate_update()
 		}
 	}
 }
+
+write_status_data = function(data){
+	var str = ""
+	$.each(data, function(key, value){
+		str += key + ': ' + value + ' | ';
+	});
+	$('#status-bar').html(str);
+}
