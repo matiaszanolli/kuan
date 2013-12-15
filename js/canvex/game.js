@@ -7,7 +7,8 @@
 (function() { // [private]
 
 const max_vertical_look = 0.8;
-const max_turn_speed = Math.PI / 4000;
+const max_turn_speed = 3.0;
+const max_mouse_movement = 60;
 const turn_threshold = 2;
 
 var editor_enabled = this.editor_enabled;
@@ -660,15 +661,20 @@ function process_input(keys, dt)
 	
 	var mx = 0, my = 0;
 	if(Math.abs(cursor_move.x) > turn_threshold)
-		mx = cursor_move.x * max_turn_speed;
+		mx = cursor_move.x * (max_turn_speed / max_mouse_movement) * dt;
 	if(Math.abs(cursor_move.y) > turn_threshold)
-		my = cursor_move.y * max_turn_speed;
+		my = cursor_move.y * (max_turn_speed / max_mouse_movement) * dt;
 	
+	if(mx > 0)
+		mx = Math.min(+max_turn_speed, mx);
+	else if(mx < 0)
+		mx = Math.max(-max_turn_speed, mx);
 	rotate_camera(mx);
+	
 	if(my > 0)
 		player.dh = Math.min(+max_vertical_look, player.dh - my);
 	else if(my < 0)
-		player.dh = Math.max(-max_vertical_look, player.dh - my);		
+		player.dh = Math.max(-max_vertical_look, player.dh - my);
 }
 
 function do_gravity(dt)
