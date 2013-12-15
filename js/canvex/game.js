@@ -1016,32 +1016,6 @@ $(document).ready(function()
 
 	// Set up input handlers
 
-	if (dctx)
-	{
-		document.getElementById('dc').onmousemove = function(e)
-		{
-			var x = e.clientX-this.offsetLeft;
-			var y = e.clientY-this.offsetTop;
-			status_data.mouse_x = x;
-			status_data.mouse_y = y;
-			x -= player.x*map_scale + map_shift_x + dctx.canvas.width/2;
-			y -= player.y*map_scale + map_shift_y + dctx.canvas.height/2;
-			var mag = Math.sqrt(x*x + y*y);
-			x /= mag;
-			y /= mag;
-			player.dx = x;
-			player.dy = y;
-		};
-	
-		document.getElementById('dc').onclick = function(e)
-		{
-			var x = e.clientX-this.offsetLeft;
-			var y = e.clientY-this.offsetTop;
-			move_camera((x - map_shift_x - dctx.canvas.width/2) / map_scale-player.x,
-			            (y - map_shift_y - dctx.canvas.height/2) / map_scale-player.y);
-		};
-	}
-	
 	var keys = {};
 	document.addEventListener('keydown', function(e)
 	{
