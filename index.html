@@ -5,9 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Canvex test</title>
             <link rel="stylesheet" href="css/canvex.css" />
-            <link rel="stylesheet" href="css/normalize.css" />
+            <link rel="stylesheet" href="css/normalize.css" />            
             <script src="js/vendor/jquery.js"></script>
             <script src="js/foundation/foundation.js"></script>
+            <script src="js/pointer.js"></script>
             <script type="text/javascript" src="js/canvex/textures/sprites.js"></script>
             <script type="text/javascript" src="js/canvex/textures.js"></script>
             <script type="text/javascript" src="js/canvex/global.js"></script>
@@ -39,7 +40,7 @@
                     <div id="help_fg" class="row panel">
                         Keys:
                         <ul>
-                            <li><span class="key">Arrow keys</span> walk forwards, backwards, rotate</li>
+                            <li><span class="key">W,S,A,D</span> walk forwards, backwards, rotate</li>
                             <li><span class="key">Space bar</span> jump</li>
                             <li><span class="key"><tt>,</tt> and <tt>.</tt></span> strafe left and right</li>
                             <li><span class="key"><tt>x</tt> and <tt>c</tt></span> strafe left and right</li>
@@ -52,9 +53,10 @@
                         <input type="text" id="status" size="100"/>
                     </div>
                     <div class="row panel">
+                    	<button onclick="lockPointer();">FULL SCREEN</button>
                         <button id="pause">Pause</button>
                         FPS: <span id="framerate"></span>
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -64,7 +66,7 @@
             $(document).foundation();
             var width = $("#uic").width();
             var height = $("#uic").height();
-            change_res(width,height);
+            change_res(width,height);            
         });
         </script>
     </body>

@@ -7,6 +7,8 @@
 (function() { // [private]
 
 const max_vertical_look = 0.8;
+const max_turn_speed = Math.PI / 4000;
+const turn_threshold = 2;
 
 var editor_enabled = this.editor_enabled;
 var ui_enabled = this.ui_enabled;
@@ -611,6 +613,8 @@ function jump()
 	}
 }
 
+cursor_move = {'x':0, 'y':0}
+
 function process_input(keys, dt)
 {
 	var walk_speed = 1.5;
@@ -618,12 +622,12 @@ function process_input(keys, dt)
 	var turn_speed = 1.5;
 	var look_speed = 1;
 
-	if (keys[DOM_VK.LEFT])  { rotate_camera(-turn_speed*dt); } 
-	if (keys[DOM_VK.RIGHT]) { rotate_camera( turn_speed*dt); } 
+	if (keys[DOM_VK.A])  { rotate_camera(-turn_speed*dt); } 
+	if (keys[DOM_VK.D]) { rotate_camera( turn_speed*dt); } 
 
 	var dx = 0, dy = 0;
-	if (keys[DOM_VK.UP])   { dx += walk_speed; }
-	if (keys[DOM_VK.DOWN]) { dx -= walk_speed; }
+	if (keys[DOM_VK.W])   { dx += walk_speed; }
+	if (keys[DOM_VK.S]) { dx -= walk_speed; }
 
 	// Opera sends keyCode 44 (Mozilla's DOM_VK_DELETE) for
 	// both '.' and 'del'. We can't tell them apart, so just accept
@@ -651,6 +655,20 @@ function process_input(keys, dt)
 	if (keys[DOM_VK.PAGE_DOWN]) { player.dh = Math.max(-max_vertical_look, player.dh-look_speed*dt); }
 	
 	if (keys[DOM_VK.SPACE]) { jump(); }
+	
+	if(keys[DOM_VK.F2]) { lockPointer(); }
+	
+	var mx = 0, my = 0;
+	if(Math.abs(cursor_move.x) > turn_threshold)
+		mx = cursor_move.x * max_turn_speed;
+	if(Math.abs(cursor_move.y) > turn_threshold)
+		my = cursor_move.y * max_turn_speed;
+	
+	rotate_camera(mx);
+	if(my > 0)
+		player.dh = Math.min(+max_vertical_look, player.dh - my);
+	else if(my < 0)
+		player.dh = Math.max(-max_vertical_look, player.dh - my);		
 }
 
 function do_gravity(dt)
@@ -1016,6 +1034,13 @@ $(document).ready(function()
 
 	// Set up input handlers
 
+	document.addEventListener("mousemove", function(e){
+		cursor_move.x = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+		cursor_move.y = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+		status_data.move_x = cursor_move.x;
+		status_data.move_y = cursor_move.y;
+	}, false);
+	
 	var keys = {};
 	document.addEventListener('keydown', function(e)
 	{
