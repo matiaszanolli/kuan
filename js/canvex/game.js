@@ -14,6 +14,8 @@ const turn_threshold = 2;
 var editor_enabled = this.editor_enabled;
 var ui_enabled = this.ui_enabled;
 
+var current_x = 0;
+
 var fpsgraph_enabled = false;
 
 var camera = {
@@ -616,6 +618,12 @@ function jump()
 
 cursor_move = {'x':0, 'y':0}
 
+function process_mouse_input(dx, dt) {
+	console.log(dx);
+	rotate_camera(dx/10000);
+	current_x = 0;
+}
+
 function process_input(keys, dt)
 {
 	var walk_speed = 1.5;
@@ -623,11 +631,11 @@ function process_input(keys, dt)
 	var turn_speed = 1.5;
 	var look_speed = 1;
 
-	if (keys[DOM_VK.A])  { rotate_camera(-turn_speed*dt); } 
+	if (keys[DOM_VK.A]) { rotate_camera(-turn_speed*dt); } 
 	if (keys[DOM_VK.D]) { rotate_camera( turn_speed*dt); } 
 
 	var dx = 0, dy = 0;
-	if (keys[DOM_VK.W])   { dx += walk_speed; }
+	if (keys[DOM_VK.W]) { dx += walk_speed; }
 	if (keys[DOM_VK.S]) { dx -= walk_speed; }
 
 	// Opera sends keyCode 44 (Mozilla's DOM_VK_DELETE) for
@@ -825,6 +833,7 @@ function game_tick(ctx, dctx, gctx, w, h, keys, dt)
 
 	case STATE_PLAYING:
 		process_input(keys, dt);
+		process_mouse_input(current_x, dt);
 		do_gravity(dt);
 		process_scripts(dt);
 		
@@ -1035,10 +1044,20 @@ $(document).ready(function()
 	document.getElementById('pause').onclick = toggle_paused;
 
 	var status_data = {};
-
+	
 	//////
 
 	// Set up input handlers
+		
+	$('#c').mousemove(function(event) {
+		if (Math.abs(event.pageX - current_x) > 10) {
+			// Si hay un cambio grande de posicion 
+			current_x = 0;
+		} else {
+			current_x = event.pageX - current_x;
+		}
+	});
+
 
 	document.addEventListener("mousemove", function(e){
 		cursor_move.x = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
@@ -1046,6 +1065,31 @@ $(document).ready(function()
 		status_data.move_x = cursor_move.x;
 		status_data.move_y = cursor_move.y;
 	}, false);
+	if (dctx)
+	{
+		/*document.getElementById('dc').onmousemove = function(e)
+		{
+			var x = e.clientX-this.offsetLeft;
+			var y = e.clientY-this.offsetTop;
+			status_data.mouse_x = x;
+			status_data.mouse_y = y;
+			x -= player.x*map_scale + map_shift_x + dctx.canvas.width/2;
+			y -= player.y*map_scale + map_shift_y + dctx.canvas.height/2;
+			var mag = Math.sqrt(x*x + y*y);
+			x /= mag;
+			y /= mag;
+			player.dx = x;
+			player.dy = y;
+		};*/
+		
+		document.getElementById('dc').onclick = function(e)
+		{
+			var x = e.clientX-this.offsetLeft;
+			var y = e.clientY-this.offsetTop;
+			move_camera((x - map_shift_x - dctx.canvas.width/2) / map_scale-player.x,
+			            (y - map_shift_y - dctx.canvas.height/2) / map_scale-player.y);
+		};
+	}
 	
 	var keys = {};
 	document.addEventListener('keydown', function(e)
