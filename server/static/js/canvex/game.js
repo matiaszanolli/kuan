@@ -55,7 +55,7 @@ function load_texture(type, name)
 	
 	if (! textures.wall[name])
 	{
-		var texture_dir = 'textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
+		var texture_dir = 'static/textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
 
 		textures.wall[name] = [];
 		if (mipmap_enabled)
@@ -99,7 +99,7 @@ function load_sprite(name)
 				textures.sprite[name].images.push({ img:default_texture.img, w:default_texture.w, h:default_texture.h });
 
 				var image = new Image();
-				image.src = 'textures/sprites/'+spritedefs[name].img+'.'+a+'.'+f+'.png';
+				image.src = 'static/textures/sprites/'+spritedefs[name].img+'.'+a+'.'+f+'.png';
 				loading_textures.push( { type:'sprite', obj:textures.sprite[name].images[i], img:image } );
 				++i;
 			}
@@ -619,7 +619,6 @@ function jump()
 cursor_move = {'x':0, 'y':0}
 
 function process_mouse_input(dx, dt) {
-	console.log(dx);
 	rotate_camera(dx/10000);
 	current_x = 0;
 }

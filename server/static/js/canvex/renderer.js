@@ -797,7 +797,7 @@ function render_paused(ctx, w, h)
 	if (! paused_img)
 	{
 		paused_img = new Image();
-		paused_img.src = 'textures/misc/paused.png';
+		paused_img.src = 'static/textures/misc/paused.png';
 	}
 	if (! paused_img.complete)
 	{
