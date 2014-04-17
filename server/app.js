@@ -24,16 +24,17 @@ app.configure(function() {
 	// set .html as the default extension 
 	app.set('view engine', 'html');
 	app.set('views', __dirname + '/views');
-	app.use(express.static(__dirname + 'static'));
+	app.use(express.static(__dirname + '/static'));
 });
 
-// Start the app
-http.createServer(app).listen(3000, function() {
-  console.log('Express app started');
-});
 // A route for the home page
 app.get('/', function(req, res) {
   res.render('index', {
     title: 'Consolidate.js'
   });
+});
+
+// Start the app
+http.createServer(app).listen(3000, function() {
+  console.log('Express app started');
 });
