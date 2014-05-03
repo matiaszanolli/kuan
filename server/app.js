@@ -34,7 +34,9 @@ app.get('/', function(req, res) {
   });
 });
 
+app.port = 8000;
+
 // Start the app
-http.createServer(app).listen(3000, function() {
-  console.log('Express app started');
+http.createServer(app).listen(app.port, function() {
+  console.log('Listening on port' + app.port);
 });
