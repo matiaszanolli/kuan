@@ -52,10 +52,10 @@ function load_texture(type, name)
 	{
 		return undefined;
 	}
-	
+
 	if (! textures.wall[name])
 	{
-		var texture_dir = 'static/textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
+		var texture_dir = 'textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
 
 		textures.wall[name] = [];
 		if (mipmap_enabled)
@@ -76,7 +76,7 @@ function load_texture(type, name)
 			loading_textures.push( { type:type, obj:textures.wall[name][mipmap_min], img:image } );
 		}
 	}
-	
+
 	return textures.wall[name];
 }
 
@@ -89,7 +89,7 @@ function load_sprite(name)
 			// error - sprite doesn't exist
 			return null;
 		}
-		
+
 		textures.sprite[name] = { sprite:spritedefs[name], images:[] };
 		var i = 0;
 		for (var a = 0; a < spritedefs[name].angles; ++a)
@@ -99,7 +99,7 @@ function load_sprite(name)
 				textures.sprite[name].images.push({ img:default_texture.img, w:default_texture.w, h:default_texture.h });
 
 				var image = new Image();
-				image.src = 'static/textures/sprites/'+spritedefs[name].img+'.'+a+'.'+f+'.png';
+				image.src = 'textures/sprites/'+spritedefs[name].img+'.'+a+'.'+f+'.png';
 				loading_textures.push( { type:'sprite', obj:textures.sprite[name].images[i], img:image } );
 				++i;
 			}
@@ -149,7 +149,7 @@ function process_pending_textures(ctx)
 					{
 						tex.obj.img = tex.img;
 					}
-				
+
 					if (tex.type == 'wall')
 					{
 						tex.obj.w = tex.img.width / texture_u_repeat;
@@ -237,10 +237,10 @@ function preprocess_map(ctx, h)
 	{
 		player.sector_id = player.s.id;
 	}
-	
+
 	sectors = [];
 	level_data.proximity_triggers = [];
-	
+
 	for (var s = 0; s < level.sectors.length; ++s)
 	{
 		var sector = level.sectors[s];
@@ -253,11 +253,11 @@ function preprocess_map(ctx, h)
 			sector_id: s,
 			sprites: {}
 		};
-		
+
 		if (options_flags.gradient_surfaces)
 		{
 			var gradient;
-			
+
 			var dh = h * max_vertical_look;
 			var stop0 = dh / (h+2*dh);
 			var stop1 = (dh+h) / (h+2*dh);
@@ -346,7 +346,7 @@ function preprocess_map(ctx, h)
 				vscale: 1/edge.tex.u.vs,
 				tex: load_texture('wall', edge.tex.u.n || edge.tex.l.n)
 			};
-			
+
 			new_sector.edges.push(new_edge);
 		}
 
@@ -370,7 +370,7 @@ function preprocess_map(ctx, h)
 	}
 
 	player.s = sectors[player.sector_id];
-	
+
 	// Handle scripted sectors
 	for (var s = 0; s < level.sectors.length; ++s)
 	{
@@ -409,7 +409,7 @@ function preprocess_map(ctx, h)
 		};
 		new_sprite.spritedef = load_sprite(level.sprites[s].sprite);
 		new_sprite.sector = sectors[level.sprites[s].sector];
-		
+
 		new_sprite.z = level.sprites[s].z + new_sprite.sector.floor_height;
 
 
@@ -421,7 +421,7 @@ function preprocess_map(ctx, h)
 		{
 			nearby_sectors[i].sprites[s] = 1;
 		}
-		
+
 		sprites.push(new_sprite);
 	}
 }
@@ -434,7 +434,7 @@ function find_nearby_sectors_(x, y, sector, d, found)
 		return;
 	}
 	found[sector.id] = true;
-	
+
 	for (var e = 0; e < sector.edges.length; ++e)
 	{
 		var edge = sector.edges[e];
@@ -489,7 +489,7 @@ function move_camera_by(dx, dy, t)
 			var edge = nearby_sectors[s].edges[e];
 
 			// Try colliding against solid/portal wall:
-			
+
 			// If this is a portal wall, check whether we can fit between
 			// new sector's floor and ceiling
 			if (edge.dest &&
@@ -554,18 +554,18 @@ function move_camera_by(dx, dy, t)
 			}
 		}
 	}
-	
+
 	// Now player.(x,y) + (dx,dy) is a valid place to be.
-	
+
 	player.x += dx;
 	player.y += dy;
 
 	// Work out which sector it is in. (This is probably more robust than
 	// trying to work out which boundaries have been crossed, because the
 	// path dx,dy might be jumping outside the level geometry.)
-	
+
 	var new_sectors;
-	
+
 	for (var s = 0; s < nearby_sectors.length; ++s)
 	{
 		if (point_is_in_polygon(player.x, player.y, nearby_sectors[s]))
@@ -630,8 +630,8 @@ function process_input(keys, dt)
 	var turn_speed = 1.5;
 	var look_speed = 1;
 
-	if (keys[DOM_VK.A]) { rotate_camera(-turn_speed*dt); } 
-	if (keys[DOM_VK.D]) { rotate_camera( turn_speed*dt); } 
+	if (keys[DOM_VK.A]) { rotate_camera(-turn_speed*dt); }
+	if (keys[DOM_VK.D]) { rotate_camera( turn_speed*dt); }
 
 	var dx = 0, dy = 0;
 	if (keys[DOM_VK.W]) { dx += walk_speed; }
@@ -661,23 +661,23 @@ function process_input(keys, dt)
 
 	if (keys[DOM_VK.PAGE_UP])   { player.dh = Math.min(+max_vertical_look, player.dh+look_speed*dt); }
 	if (keys[DOM_VK.PAGE_DOWN]) { player.dh = Math.max(-max_vertical_look, player.dh-look_speed*dt); }
-	
+
 	if (keys[DOM_VK.SPACE]) { jump(); }
-	
+
 	if(keys[DOM_VK.F2]) { lockPointer(); }
-	
+
 	var mx = 0, my = 0;
 	if(Math.abs(cursor_move.x) > turn_threshold)
 		mx = cursor_move.x * (max_turn_speed / max_mouse_movement) * dt;
 	if(Math.abs(cursor_move.y) > turn_threshold)
 		my = cursor_move.y * (max_turn_speed / max_mouse_movement) * dt;
-	
+
 	if(mx > 0)
 		mx = Math.min(+max_turn_speed, mx);
 	else if(mx < 0)
 		mx = Math.max(-max_turn_speed, mx);
 	rotate_camera(mx);
-	
+
 	if(my > 0)
 		player.dh = Math.min(+max_vertical_look, player.dh - my);
 	else if(my < 0)
@@ -691,7 +691,7 @@ function do_gravity(dt)
 	var max_floor = -Infinity, min_ceiling = Infinity;
 
 	var r = player.radius - 0.01; // slight fudginess to prevent floating up walls
-	
+
 	var nearby_sectors = find_nearby_sectors(player.x, player.y, player.s, r);
 
 	for (var s = 0; s < nearby_sectors.length; ++s)
@@ -699,7 +699,7 @@ function do_gravity(dt)
 		max_floor = Math.max(nearby_sectors[s].floor_height, max_floor);
 		min_ceiling = Math.min(nearby_sectors[s].ceiling_height, min_ceiling);
 	}
-	
+
 	if (player.z == max_floor && player.vz <= 0)
 	{
 		// Nothing much to do if they're already standing on the floor
@@ -717,7 +717,7 @@ function do_gravity(dt)
 		if (player.vz > 0)
 		{
 			// Moving upwards:
-			
+
 			if (player.z + player.vz*dt + player.height <= min_ceiling)
 			{
 				// Okay to jump up this far
@@ -733,7 +733,7 @@ function do_gravity(dt)
 		else if (player.vz < 0)
 		{
 			// Moving downwards:
-			
+
 			if (player.z + player.vz*dt >= max_floor)
 			{
 				// Okay to fall down this far
@@ -766,7 +766,7 @@ function draw_map(ctx)
 	var w = ctx.canvas.width;
 	var h = ctx.canvas.height;
 	ctx.fillRect((-map_shift_x-w/2)/map_scale, (-map_shift_y-h/2)/map_scale, w/map_scale, h/map_scale);
-	
+
 	var d = '';
 
 	for (var s = 0; s < sectors.length; ++s)
@@ -835,7 +835,7 @@ function game_tick(ctx, dctx, gctx, w, h, keys, dt)
 		process_mouse_input(current_x, dt);
 		do_gravity(dt);
 		process_scripts(dt);
-		
+
 		camera.x = player.x;
 		camera.y = player.y;
 		camera.z = player.z + player.eyeline;
@@ -851,9 +851,9 @@ function game_tick(ctx, dctx, gctx, w, h, keys, dt)
 			draw_map(dctx);
 			profile_end('map');
 		}
-		
+
 		process_pending_textures(ctx);
-		
+
 		render_frame(ctx, dctx, gctx, w, h, camera);
 
 		break;
@@ -885,7 +885,7 @@ $(document).ready(function()
 	// Set up the graphics system
 
 	var screen_ctx = document.getElementById('c').getContext('2d');
-	
+
 	var screen_ui = $('#c');
 
 	var w = document.getElementById('c').width;
@@ -905,7 +905,7 @@ $(document).ready(function()
 		// Draw directly onto the screen
 		render_ctx = screen_ctx;
 	}
-	
+
 	if (options_flags.opera_context)
 	{
 		try
@@ -1011,7 +1011,7 @@ $(document).ready(function()
 			{
 				screen_ctx.drawImage(render_canvas, 0, 0);
 			}
-		
+
 			profile_report();
 			framerate_update();
 			write_status_data(status_data);
@@ -1043,14 +1043,14 @@ $(document).ready(function()
 	document.getElementById('pause').onclick = toggle_paused;
 
 	var status_data = {};
-	
+
 	//////
 
 	// Set up input handlers
-		
+
 	$('#c').mousemove(function(event) {
 		if (Math.abs(event.pageX - current_x) > 10) {
-			// Si hay un cambio grande de posicion 
+			// Si hay un cambio grande de posicion
 			current_x = 0;
 		} else {
 			current_x = event.pageX - current_x;
@@ -1080,7 +1080,7 @@ $(document).ready(function()
 			player.dx = x;
 			player.dy = y;
 		};*/
-		
+
 		document.getElementById('dc').onclick = function(e)
 		{
 			var x = e.clientX-this.offsetLeft;
@@ -1089,7 +1089,7 @@ $(document).ready(function()
 			            (y - map_shift_y - dctx.canvas.height/2) / map_scale-player.y);
 		};
 	}
-	
+
 	var keys = {};
 	document.addEventListener('keydown', function(e)
 	{
@@ -1102,7 +1102,7 @@ $(document).ready(function()
 		keys[e.keyCode] = false;
 	},
 	false);
-	
+
 	document.addEventListener('keypress', function(e)
 	{
 		// TODO: the keycode values are completely nonstandard - is
@@ -1187,7 +1187,7 @@ $(document).ready(function()
 	}
 
 	//////
-	
+
 	if (ui_enabled)
 	{
 		try
