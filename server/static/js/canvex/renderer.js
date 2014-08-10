@@ -94,7 +94,7 @@ function draw_texture(ctx, h, clip_y0, clip_y1, tex, sx,sy,sw,sh, dx,dy,dw,dh)
 	}
 	else
 	{
-	
+
 		var u0 = (sx<0 ? 1+sx%1 : sx%1);
 		var v0 = (sy<0 ? 1+sy%1 : sy%1);
 		var v1 = v0+sh;
@@ -150,7 +150,7 @@ function render_sprites(ctx, camera, sector, x0, x1, w, h)
 	{
 		var sprite = sorted_sprites[s].sprite;
 		var depth = sorted_sprites[s].w;
-		
+
 		var numframes = sprite.spritedef.sprite.frames;
 		var numangles = sprite.spritedef.sprite.angles;
 		var frame = Math.floor(camera.t*1000 / sprite.spritedef.sprite.speed) % numframes;
@@ -161,7 +161,7 @@ function render_sprites(ctx, camera, sector, x0, x1, w, h)
 		var x = w*(0.5 + uncast_ray(sprite.x, sprite.y, camera));
 		var height = h*(sprite.spritedef.sprite.height / depth);
 		var width = height * tex.w / tex.h;
-		
+
 		var clipped_x0 = x-width/2;
 		var clipped_x1 = x+width/2;
 		if (clipped_x0 < x1 && clipped_x1 > x0)
@@ -215,7 +215,7 @@ function draw_poly(ctx, h, tex, x, edge_end, clip_y0, clip_y1, bot0, top0, bot1,
 	{
 		return;
 	}
-	
+
 /*
 ctx.strokeStyle = '#ffffff';
 ctx.beginPath();
@@ -393,7 +393,7 @@ function draw_floor(dctx, ctx, h, w, camera, isctn0, isctn1, sector, clip_y, x0,
 	const r = 2*32;
 
 	var z = sector.floor_height-camera.z;
-	
+
 	// XXX - workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=347458
 	ctx.beginPath();
 	ctx.rect(0, 0, 0, 0);
@@ -427,22 +427,22 @@ function draw_floor(dctx, ctx, h, w, camera, isctn0, isctn1, sector, clip_y, x0,
 			dctx.fillRect(c1.x, c1.y, 0.15, 0.15);
 		}
 		*/
-		
+
 		// c0*r = uv0 is UV coords of left point, c1*r of right
 		// s0 is [x0, sy], s1 is [x1, sy]
-		
+
 		// Need M*uv0*128 = s0, M*uv1*128 = s1
 		// => (M*128)*(uv0-uv1) = s0-s1
-		
+
 		// M*128 = scale(|s0-s1| / |uv0-uv1|) * rotate(-atan2(v0-v1, u0-u0))
 		// M = scale(|s0-s1| / |uv0-uv1| / 128) * rotate(-atan2(v0-v1, u0-u0)) * translate(tx, ty)
-		
+
 		// M*uv0*128 = s0
 		// => scale(|s0-s1| / |uv0-uv1|) * rotate(-atan2(v0-v1, u0-u0)) * translate(tx, ty) * uv0 = s0
 		// => translate(tx, ty) * uv0 = (scale(|s0-s1| / |uv0-uv1|) * rotate(-atan2(v0-v1, u0-u0)))^-1 * s0
 		// => translate(tx, ty) * uv0 = scale(|uv0-uv1| / |s0-s1|) * rotate(atan2(v0-v1, u0-u0)) * s0
 		// => [tx, ty] = scale(|uv0-uv1| / |s0-s1|) * rotate(atan2(v0-v1, u0-u0)) * s0 - uv0
-		
+
 		var s_over_uv = (x1-x0) / (r * point_distance(c0.x, c0.y, c1.x, c1.y));
 
 		var angle = Math.atan2(c0.y-c1.y, c0.x-c1.x);
@@ -490,7 +490,7 @@ function render_rays(x0, x1, y0, y1, sector, w, h, ctx, dctx, camera, limit)
 	while (x < x1)
 	{
 		profile_count("cast strip");
-		
+
 		if (dctx)
 		{
 			var px = x/w - 0.5;
@@ -526,7 +526,7 @@ function render_rays(x0, x1, y0, y1, sector, w, h, ctx, dctx, camera, limit)
 
 			// edge_end: exclusive pixel coord
 			var edge_end = Math.floor(1+w*(0.5 + uncast_ray(edge.x1, edge.y1, camera)));
-			
+
 			var isctn1;
 			// Clip to viewport rectangle
 			if (edge_end > x1)
@@ -542,12 +542,12 @@ function render_rays(x0, x1, y0, y1, sector, w, h, ctx, dctx, camera, limit)
 			if (edge.dest === null)
 			{
 				// Solid wall
-				
+
 				var bottom0 = h*(0.5 - (-camera.z + sector.ceiling_height)/isctn0.dist);
 				var top0    = h*(0.5 - (-camera.z + sector.floor_height)/isctn0.dist);
 				var bottom1 = h*(0.5 - (-camera.z + sector.ceiling_height)/isctn1.dist);
 				var top1    = h*(0.5 - (-camera.z + sector.floor_height)/isctn1.dist);
-				
+
 				var w0 = isctn0.dist;
 				var w1 = isctn1.dist;
 				var u0 = isctn0.u;
@@ -565,7 +565,7 @@ function render_rays(x0, x1, y0, y1, sector, w, h, ctx, dctx, camera, limit)
 			else
 			{
 				// Portal wall
-				
+
 				// Recursively draw what we can see through this hole
 				var bottom0 = h*(0.5 - (-camera.z + Math.max(sector.floor_height, edge.dest.floor_height))/isctn0.dist);
 				var top0    = h*(0.5 - (-camera.z + Math.min(sector.ceiling_height, edge.dest.ceiling_height))/isctn0.dist);
@@ -607,7 +607,7 @@ function render_rays(x0, x1, y0, y1, sector, w, h, ctx, dctx, camera, limit)
 					var top0    = h*(0.5 - (-camera.z + sector.floor_height)/isctn0.dist);
 					var bottom1 = h*(0.5 - (-camera.z + sector.ceiling_height)/isctn1.dist);
 					var top1    = h*(0.5 - (-camera.z + sector.floor_height)/isctn1.dist);
-					
+
 					draw_poly(ctx, h, edge.middle, x, edge_end, y0, y1, bottom0, top0, bottom1, top1, w0, w1, u0, u1, v0, v1, null, null, sector.light, false);
 				}
 
@@ -624,25 +624,25 @@ function render_rays(x0, x1, y0, y1, sector, w, h, ctx, dctx, camera, limit)
 				var v0 = -edge.dest.floor_height;
 
 				draw_poly(ctx, h, edge.lower, x, edge_end, y0, y1, bottom0, top0, bottom1, top1, w0, w1, u0, u1, v0, v1, sector.floor, null, sector.light, false);
-				
+
 				if (options_flags.textured_floors)
 				{
 					draw_floor(dctx, ctx, h, w, camera, isctn0, isctn1, sector, y1, x, edge_end, top0, top1);
 				}
-					
-				
+
+
 				// Upper parts of portal walls:
 				var bottom0 = h*(0.5 - (-camera.z + sector.ceiling_height)/isctn0.dist);
 				var top0    = h*(0.5 - (-camera.z + edge.dest.ceiling_height)/isctn0.dist);
 				var bottom1 = h*(0.5 - (-camera.z + sector.ceiling_height)/isctn1.dist);
 				var top1    = h*(0.5 - (-camera.z + edge.dest.ceiling_height)/isctn1.dist);
-	
+
 				var v1 = -edge.dest.ceiling_height;
 				var v0 = -sector.ceiling_height;
-	
+
 				draw_poly(ctx, h, edge.upper, x, edge_end, y0, y1, bottom0, top0, bottom1, top1, w0, w1, u0, u1, v0, v1, null, sector.ceiling, sector.light, false);
 			}
-			
+
 			if (edge_end > x)
 			{
 				x = edge_end;
@@ -692,7 +692,7 @@ function cast_ray(sector, px, camera)
 	var mag = Math.sqrt(ray_dx*ray_dx + ray_dy*ray_dy);
 	ray_dx /= mag;
 	ray_dy /= mag;
-	
+
 	var ray_x = camera.x;
 	var ray_y = camera.y;
 
@@ -734,7 +734,7 @@ function cast_ray_edge(edge, px, camera)
 	var mag = Math.sqrt(ray_dx*ray_dx + ray_dy*ray_dy);
 	ray_dx /= mag;
 	ray_dy /= mag;
-	
+
 	var ray_x = camera.x;
 	var ray_y = camera.y;
 
@@ -750,7 +750,7 @@ function ray_coords(depth, px, camera)
 	var ray_dx = camera.dx-camera.dy*px;
 	var ray_dy = camera.dy+camera.dx*px;
 	depth /= camera.dx*ray_dx + camera.dy*ray_dy;
-	
+
 	return { x: camera.x+depth*ray_dx, y: camera.y+depth*ray_dy };
 }
 

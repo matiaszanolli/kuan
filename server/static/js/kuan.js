@@ -1,8 +1,5 @@
-define(['views/index'], function(indexView) {
-	var initialize = function() {
-		indexView.render();	
-	}
-	return {
-		initialize: initialize
-	};
-});
+(function () {
+  'use strict';
+	var canvex = require('./canvex/textures/sprites');
+
+}());
