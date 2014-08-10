@@ -6,5 +6,5 @@ define(['text!views/index.html'], function(indexTemplate) {
 		}
 	});
 
-	return new indexView;
+	return new indexView();
 });

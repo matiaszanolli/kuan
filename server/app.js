@@ -17,15 +17,14 @@ var app = express();
 
 console.log('Starting app...');
 
-app.configure(function() {
-	// assign the underscore engine to .html files
-	app.engine('html', cons.underscore);
+// assign the underscore engine to .html files
+app.engine('html', cons.underscore);
 
-	// set .html as the default extension 
-	app.set('view engine', 'html');
-	app.set('views', __dirname + '/views');
-	app.use(express.static(__dirname + '/static'));
-});
+// set .html as the default extension
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+app.use(express.static(__dirname + '/static'));
+console.log(__dirname + '/static');
 
 // A route for the home page
 app.get('/', function(req, res) {
