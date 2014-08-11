@@ -6,6 +6,10 @@
 
 var Game = function() {
   var self = this;
+	self.options_flags = require('./options_flags');
+	var Renderer = require('./renderer');
+	self.renderer = new Renderer(self.options_flags);
+
   self.max_vertical_look = 0.8;
   self.max_turn_speed = 3.0;
   self.max_mouse_movement = 60;
@@ -55,12 +59,12 @@ var Game = function() {
 
     if (! self.textures.wall[name])
     {
-      var texture_dir = 'textures/tiled/' + ((options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
+      var texture_dir = 'textures/tiled/' + ((self.options_flags.draw_pattern_walls || type == 'floor' || type == 'ceiling') ? 'mip2/' : 'mip/');
 
       self.textures.wall[name] = [];
-      if (mipmap_enabled)
+      if (self.options_flags.mipmap_enabled)
       {
-        for (var i = mipmap_min; i <= mipmap_max; ++i)
+        for (var i = self.options_flags.mipmap_min; i <= self.options_flags.mipmap_max; ++i)
         {
           var image = new Image();
           image.src = texture_dir+name+'.'+i+'.png';
@@ -71,9 +75,9 @@ var Game = function() {
       else
       {
         var image = new Image();
-        image.src = texture_dir+name+'.'+mipmap_max+'.png';
-        self.textures.wall[name][mipmap_min] = { img:self.default_texture.img, w:self.default_texture.w, h:self.default_texture.h };
-        self.loading_textures.push( { type:type, obj:self.textures.wall[name][mipmap_min], img:image } );
+        image.src = texture_dir+name+'.'+self.options_flags.mipmap_max+'.png';
+        self.textures.wall[name][self.options_flags.mipmap_min] = { img:self.default_texture.img, w:self.default_texture.w, h:self.default_texture.h };
+        self.loading_textures.push( { type:type, obj:self.textures.wall[name][self.options_flags.mipmap_min], img:image } );
       }
     }
 
@@ -124,7 +128,7 @@ var Game = function() {
       {
         if (tex.img.width)
         {
-          if (options_flags.draw_pattern_walls && tex.type == 'wall')
+          if (self.options_flags.draw_pattern_walls && tex.type == 'wall')
           {
             tex.obj.img = ctx.createPattern(tex.img, 'repeat');
 
@@ -137,7 +141,7 @@ var Game = function() {
             {
               tex.obj.img = ctx.createPattern(tex.img, 'repeat');
             }
-            else if (options_flags.draw_from_canvas)
+            else if (self.options_flags.draw_from_canvas)
             {
               var canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
               canvas.width = tex.img.width;
@@ -152,8 +156,8 @@ var Game = function() {
 
             if (tex.type == 'wall')
             {
-              tex.obj.w = tex.img.width / texture_u_repeat;
-              tex.obj.h = tex.img.height / texture_v_repeat;
+              tex.obj.w = tex.img.width / self.options_flags.texture_u_repeat;
+              tex.obj.h = tex.img.height / self.options_flags.texture_v_repeat;
             }
             else // tex.type == 'sprite' || 'floor'
             {
@@ -254,7 +258,7 @@ var Game = function() {
         sprites: {}
       };
 
-      if (options_flags.gradient_surfaces)
+      if (self.options_flags.gradient_surfaces)
       {
         var gradient;
 
@@ -263,7 +267,7 @@ var Game = function() {
         var stop1 = (dh+h) / (h+2*dh);
 
         // Create the floor pattern
-        if (! options_flags.textured_floors)
+        if (! self.options_flags.textured_floors)
         {
           gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
           var c = colour_interpolate([ 0, 0, 0 ], sector.floor, sector.light);
@@ -282,7 +286,7 @@ var Game = function() {
         }
 
         // Create the ceiling pattern
-        if (! options_flags.textured_ceilings)
+        if (! self.options_flags.textured_ceilings)
         {
           // #TODO: Not working yet
           gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
@@ -854,11 +858,11 @@ var Game = function() {
 
       process_pending_textures(ctx);
 
-      render_frame(ctx, dctx, gctx, w, h, self.camera);
+      self.renderer.render_frame(ctx, dctx, gctx, w, h, self.camera);
 
       break;
     }
-  }
+  };
 
   self.on_map_loaded = function(ctx, h)
   {

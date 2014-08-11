@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var game = require('./game');
+  var game = require('./game'),
   profiler_enabled = (document.getElementById('profile') !== null);
 
   // Set up the graphics system
@@ -13,7 +13,7 @@ $(document).ready(function()
   var h = document.getElementById('c').height;
 
   var render_ctx, render_canvas;
-  if (options_flags.double_buffer)
+  if (game.options_flags.double_buffer)
   {
     // Create temporary canvas for double-buffering
     render_canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
@@ -27,7 +27,7 @@ $(document).ready(function()
     render_ctx = screen_ctx;
   }
 
-  if (options_flags.opera_context)
+  if (game.options_flags.opera_context)
   {
     try
     {
@@ -44,7 +44,7 @@ $(document).ready(function()
   }
 
   var dctx;
-  if (options_flags.map && document.getElementById('dc'))
+  if (game.options_flags.map && document.getElementById('dc'))
   {
     dctx = document.getElementById('dc').getContext('2d');
     dctx.lineWidth = 1/map_scale;
@@ -327,3 +327,14 @@ $(document).ready(function()
   toggle_paused();
 
 }); // $(document).ready
+
+var previousError;
+
+function debug(str)
+{
+  $('#status').val(str);
+  if (str.stack != previousError) {
+    console.log(str.stack);
+    previousError = str.stack;
+  }
+}
