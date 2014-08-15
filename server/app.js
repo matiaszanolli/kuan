@@ -1,24 +1,20 @@
-/*var server = require("./server");
+var http       = require('http'),
+    express    = require('express'),
+    cons       = require('consolidate'),
+    browserify = require('browserify-middleware');
 
-var handlers = {}
-	handlers["/"] = requestHandlers.iniciar;
-	handlers["/iniciar"] = requestHandlers.iniciar;
 
-server.iniciar();
-*/
-
-// Include the Node HTTP library
-var http = require('http');
-// Include the Express module
-var express = require('express');
-var cons = require('consolidate');
-// Create an instance of Express
 var app = express();
 
 console.log('Starting app...');
 
 // assign the underscore engine to .html files
 app.engine('html', cons.underscore);
+
+browserify.settings.development('basedir', __dirname);
+
+app.use('/static/js', browserify('./static/js/dist'));
+app.get('/js/kuan.min.js', browserify('./static/js/canvex/boot.js'));
 
 // set .html as the default extension
 app.set('view engine', 'html');

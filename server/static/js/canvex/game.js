@@ -159,10 +159,14 @@ var Game = function() {
               tex.obj.w = tex.img.width / self.options_flags.texture_u_repeat;
               tex.obj.h = tex.img.height / self.options_flags.texture_v_repeat;
             }
-            else // tex.type == 'sprite' || 'floor'
+            else if (tex.type == 'sprite') // tex.type == 'sprite' || 'floor'
             {
               tex.obj.w = tex.img.width;
               tex.obj.h = tex.img.height;
+            }
+            else {
+              tex.obj.w = tex.img.width / self.options_flags.floor_u_repeat;
+              tex.obj.h = tex.img.height / self.options_flags.floor_v_repeat;
             }
           }
         }
@@ -690,7 +694,7 @@ var Game = function() {
 
   function do_gravity(dt)
   {
-    var gravity_accel = 5;
+    var gravity_accel = self.options_flags.physics.gravity;
 
     var max_floor = -Infinity, min_ceiling = Infinity;
 

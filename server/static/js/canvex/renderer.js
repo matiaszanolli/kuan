@@ -461,8 +461,8 @@ var Renderer = function(options_flags) {
 			var x1b = x1;
 			var x1c = x1;
 
-			var mip = get_mip_level(sector.floor, s_over_uv/48);
-			var s = 128 / Math.pow(2, mip);
+			var mip = get_mip_level(sector.floor, s_over_uv/48); // Mipmapping calculated level
+			var s = 256 / Math.pow(2, mip);
 
 			ctx.fillStyle = sector.floor[mip].img;
 

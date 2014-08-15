@@ -6,7 +6,7 @@ var player = {
 	x: -1, y: 0, z: 0.5, // location
 	dx: Math.cos(0), dy: Math.sin(0), // view direction (2D unit vector)
 	dh: 0, // vertical view offset
-	vz: 0, // upwards velocity
+	vz: 1, // upwards velocity
 	sector_id: 0, s: undefined, // sector (id used only for initialisation)
 	radius: 0.2, // collision radius
 	height: 0.5, // height of collision cylinder

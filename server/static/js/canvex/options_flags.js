@@ -1,9 +1,14 @@
 module.exports = {
+  physics: {
+    gravity: 5
+  },
   mipmap_max : 7,
   mipmap_min : 3,
   mipmap_enabled : 1,
   texture_u_repeat : 192/128,
   texture_v_repeat : 144/128,
+  floor_u_repeat : 0.5,
+  floor_v_repeat : 0.5,
   gradient_surfaces: 1,
   horizontal_scale: 8, // TODO: reimplement
   low_textures: 1, // TODO: reimplement
