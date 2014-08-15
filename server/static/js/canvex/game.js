@@ -831,7 +831,7 @@ var Game = function() {
   const STATE_LOADING = 0;
   const STATE_PLAYING = 1;
   var game_state = STATE_LOADING;
-  self.game_tick = function(dctx, gctx, w, h, keys, dt)
+  self.game_tick = function(gctx, w, h, keys, dt)
   {
     switch (game_state)
     {
@@ -854,16 +854,17 @@ var Game = function() {
       self.camera.s = player.s;
       self.camera.t += dt;
 
-      if (dctx)
+      if (self.dctx)
       {
         profile_begin('map');
-        draw_map(dctx);
+        draw_map(self.dctx);
         profile_end('map');
       }
 
       self.process_pending_textures();
 
-      self.renderer.render_frame(self.render_ctx, dctx, gctx, w, h, self.camera);
+      //@TODO levantar render_ctx y dctx desde self
+      self.renderer.render_frame(self.render_ctx, self.dctx, gctx, w, h, self.camera);
 
       break;
     }

@@ -30,13 +30,14 @@ $(document).ready(function()
     game.render_ctx = screen_ctx;
   }
 
-  var dctx;
+  // Create the DOM context
+  game.dctx = undefined;
   if (game.options_flags.map && document.getElementById('dc'))
   {
-    dctx = document.getElementById('dc').getContext('2d');
-    dctx.lineWidth = 1/map_scale;
-    dctx.translate(map_shift_x+dctx.canvas.width/2, map_shift_y+dctx.canvas.height/2);
-    dctx.scale(map_scale, map_scale);
+    game.dctx = document.getElementById('dc').getContext('2d');
+    game.dctx.lineWidth = 1/map_scale;
+    game.dctx.translate(map_shift_x+game.dctx.canvas.width/2, map_shift_y+game.dctx.canvas.height/2);
+    game.dctx.scale(map_scale, map_scale);
   }
 
   // Allow resolution changes
@@ -114,7 +115,7 @@ $(document).ready(function()
       // TODO: smoother updates, particularly on Windows where the timer
       // is limited to ~16msec resolution
 
-      game.game_tick(dctx, gctx, w, h, keys, dt);
+      game.game_tick(gctx, w, h, keys, dt);
       if (game.render_ctx !== screen_ctx)
       {
         screen_ctx.drawImage(game.render_canvas, 0, 0);
@@ -172,7 +173,7 @@ $(document).ready(function()
     status_data.move_x = cursor_move.x;
     status_data.move_y = cursor_move.y;
   }, false);
-  if (dctx)
+  if (game.dctx)
   {
     /*document.getElementById('dc').onmousemove = function(e)
     {
@@ -193,8 +194,8 @@ $(document).ready(function()
     {
       var x = e.clientX-this.offsetLeft;
       var y = e.clientY-this.offsetTop;
-      move_camera((x - map_shift_x - dctx.canvas.width/2) / map_scale-player.x,
-                  (y - map_shift_y - dctx.canvas.height/2) / map_scale-player.y);
+      move_camera((x - map_shift_x - game.dctx.canvas.width/2) / map_scale-player.x,
+                  (y - map_shift_y - game.dctx.canvas.height/2) / map_scale-player.y);
     };
   }
 
