@@ -9,38 +9,25 @@ $(document).ready(function()
 
   var screen_ui = $('#c');
 
-  var w = document.getElementById('c').width;
-  var h = document.getElementById('c').height;
+  var w = screen_ui.width();
+  var h = screen_ui.height();
 
-  var render_ctx, render_canvas;
+  var gctx; // Stub, for deprecated Opera canvas
+
+  game.render_ctx = undefined;
+  game.render_canvas = undefined;
   if (game.options_flags.double_buffer)
   {
     // Create temporary canvas for double-buffering
-    render_canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
-    render_canvas.width = w;
-    render_canvas.height = h;
-    render_ctx = render_canvas.getContext('2d');
+    game.render_canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+    game.render_canvas.width = w;
+    game.render_canvas.height = h;
+    game.render_ctx = game.render_canvas.getContext('2d');
   }
   else
   {
     // Draw directly onto the screen
-    render_ctx = screen_ctx;
-  }
-
-  if (game.options_flags.opera_context)
-  {
-    try
-    {
-      var gctx = document.getElementById('c').getContext('opera-2dgame');
-      if (gctx)
-      {
-        gctx.lockCanvasUpdates(true);
-      }
-    }
-    catch (e)
-    {
-      // context not available
-    }
+    game.render_ctx = screen_ctx;
   }
 
   var dctx;
@@ -57,14 +44,14 @@ $(document).ready(function()
   window.change_res = function (new_w, new_h)	{
     w = new_w;
     h = new_h;
-    if (render_ctx != screen_ctx)
+    if (game.render_ctx != screen_ctx)
     {
-      render_canvas.width = w;
-      render_canvas.height = h;
+      game.render_canvas.width = w;
+      game.render_canvas.height = h;
     }
     document.getElementById('c').width = w;
     document.getElementById('c').height = h;
-    game.preprocess_map(render_ctx, h);
+    game.preprocess_map(h);
   };
 
   //////
@@ -127,10 +114,10 @@ $(document).ready(function()
       // TODO: smoother updates, particularly on Windows where the timer
       // is limited to ~16msec resolution
 
-      game.game_tick(render_ctx, dctx, gctx, w, h, keys, dt);
-      if (render_ctx !== screen_ctx)
+      game.game_tick(game.render_ctx, dctx, gctx, w, h, keys, dt);
+      if (game.render_ctx !== screen_ctx)
       {
-        screen_ctx.drawImage(render_canvas, 0, 0);
+        screen_ctx.drawImage(game.render_canvas, 0, 0);
       }
 
       profile_report();
@@ -292,7 +279,7 @@ $(document).ready(function()
 
   if (level)
   {
-    game.on_map_loaded(render_ctx, h);
+    game.on_map_loaded(h);
   }
   else
   {
@@ -302,7 +289,7 @@ $(document).ready(function()
       function (obj)
       {
         level = obj;
-        game.on_map_loaded(render_ctx, h);
+        game.on_map_loaded(h);
       }
     );
   }

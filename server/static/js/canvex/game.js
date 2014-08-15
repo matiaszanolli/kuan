@@ -239,7 +239,7 @@ var Game = function() {
     };
   }
 
-  self.preprocess_map = function(ctx, h)
+  self.preprocess_map = function(h)
   {
     if (player.s)
     {
@@ -273,7 +273,7 @@ var Game = function() {
         // Create the floor pattern
         if (! self.options_flags.textured_floors)
         {
-          gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
+          gradient = self.render_ctx.createLinearGradient(0, -dh, 0, h+dh);
           var c = colour_interpolate([ 0, 0, 0 ], sector.floor, sector.light);
           var c0 = array_to_rgba( colour_interpolate(c, [ 255, 255, 255 ], 0.3 ) );
           var c1 = array_to_rgba( c );
@@ -293,7 +293,7 @@ var Game = function() {
         if (! self.options_flags.textured_ceilings)
         {
           // #TODO: Not working yet
-          gradient = ctx.createLinearGradient(0, -dh, 0, h+dh);
+          gradient = self.render_ctx.createLinearGradient(0, -dh, 0, h+dh);
           c = colour_interpolate([ 0, 0, 0 ], sector.ceiling, sector.light);
           c0 = array_to_rgba( colour_interpolate(c, [ 0, 0, 0 ], 0.3 ) );
           c1 = array_to_rgba( c );
@@ -868,16 +868,16 @@ var Game = function() {
     }
   };
 
-  self.on_map_loaded = function(ctx, h)
+  self.on_map_loaded = function(h)
   {
   //  upgrade_level(); // XXX
-    self.preprocess_map(ctx, h);
+    self.preprocess_map(h);
 
     if (editor_enabled)
     {
       var reload_map = function ()
       {
-        self.preprocess_map(ctx, h);
+        self.preprocess_map(h);
       };
 
       editor_init(reload_map);
