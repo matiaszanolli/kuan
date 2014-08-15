@@ -588,6 +588,19 @@ var Game = function() {
     }
   }
 
+  self.Movement = function() {
+    this.clear();
+  };
+
+  self.Movement.prototype.set = function(dx, dy) {
+    this.x = dx;
+    this.y = dy;
+  };
+
+  self.Movement.prototype.clear = function() {
+    this.set(0, 0);
+  };
+
   function rotate_camera(da)
   {
     var a = Math.atan2(player.dx, player.dy);
@@ -628,7 +641,7 @@ var Game = function() {
     }
   }
 
-  cursor_move = {'x':0, 'y':0}
+  self.cursor_move = new self.Movement();
 
   function process_mouse_input(dx, dt) {
     rotate_camera(dx/10000);
@@ -676,10 +689,10 @@ var Game = function() {
     if(keys[DOM_VK.F2]) { lockPointer(); }
 
     var mx = 0, my = 0;
-    if(Math.abs(cursor_move.x) > self.turn_threshold)
-      mx = cursor_move.x * (self.max_turn_speed / self.max_mouse_movement) * dt;
-    if(Math.abs(cursor_move.y) > self.turn_threshold)
-      my = cursor_move.y * (self.max_turn_speed / self.max_mouse_movement) * dt;
+    if(Math.abs(self.cursor_move.x) > self.turn_threshold)
+      mx = self.cursor_move.x * (self.max_turn_speed / self.max_mouse_movement) * dt;
+    if(Math.abs(self.cursor_move.y) > self.turn_threshold)
+      my = self.cursor_move.y * (self.max_turn_speed / self.max_mouse_movement) * dt;
 
     if(mx > 0)
       mx = Math.min(+self.max_turn_speed, mx);

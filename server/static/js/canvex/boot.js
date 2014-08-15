@@ -124,6 +124,8 @@ $(document).ready(function()
       profile_report();
       framerate_update();
       write_status_data(status_data);
+      status_data.clear();
+      game.cursor_move.clear();
     }
     catch (e)
     {
@@ -151,7 +153,7 @@ $(document).ready(function()
 
   document.getElementById('pause').onclick = toggle_paused;
 
-  var status_data = {};
+  var status_data = new game.Movement();
 
   //////
 
@@ -168,10 +170,9 @@ $(document).ready(function()
 
 
   document.addEventListener("mousemove", function(e){
-    cursor_move.x = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
-    cursor_move.y = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
-    status_data.move_x = cursor_move.x;
-    status_data.move_y = cursor_move.y;
+    game.cursor_move.x = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+    game.cursor_move.y = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+    status_data.set(game.cursor_move.x, game.cursor_move.y);
   }, false);
   if (game.dctx)
   {
