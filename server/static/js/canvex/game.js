@@ -1,10 +1,14 @@
 /*
+ * KUAN Game Engine
+ *
+ * Based on Canvex
  * Copyright 2006 Philip Taylor
  * <philip at zaynar.demon.co.uk> / <excors at gmail.com>
  * Distributed under the terms of the GPL (http://www.gnu.org/licenses/gpl.txt)
  */
 
 var Game = function() {
+  //SET THA GAME!!
   var self = this;
 	self.options_flags = require('./options_flags');
 	var Renderer = require('./renderer');
@@ -119,7 +123,7 @@ var Game = function() {
     self.loading_textures = [];
   }
 
-  function process_pending_textures(ctx)
+  self.process_pending_textures = function()
   {
     for (var t in self.loading_textures)
     {
@@ -130,7 +134,7 @@ var Game = function() {
         {
           if (self.options_flags.draw_pattern_walls && tex.type == 'wall')
           {
-            tex.obj.img = ctx.createPattern(tex.img, 'repeat');
+            tex.obj.img = self.render_ctx.createPattern(tex.img, 'repeat');
 
             tex.obj.w = tex.img.width; // texture_u_repeat;
             tex.obj.h = tex.img.height; // texture_v_repeat;
@@ -139,7 +143,7 @@ var Game = function() {
           {
             if (tex.type == 'floor')
             {
-              tex.obj.img = ctx.createPattern(tex.img, 'repeat');
+              tex.obj.img = self.render_ctx.createPattern(tex.img, 'repeat');
             }
             else if (self.options_flags.draw_from_canvas)
             {
@@ -633,17 +637,14 @@ var Game = function() {
 
   function process_input(keys, dt)
   {
-    var walk_speed = 1.5;
-    var strafe_speed = walk_speed / 2;
-    var turn_speed = 1.5;
-    var look_speed = 1;
+    var speed = self.options_flags.player.speed;
 
-    if (keys[DOM_VK.A]) { rotate_camera(-turn_speed*dt); }
-    if (keys[DOM_VK.D]) { rotate_camera( turn_speed*dt); }
+    if (keys[DOM_VK.A]) { rotate_camera(-speed.turn*dt); }
+    if (keys[DOM_VK.D]) { rotate_camera( speed.turn*dt); }
 
     var dx = 0, dy = 0;
-    if (keys[DOM_VK.W]) { dx += walk_speed; }
-    if (keys[DOM_VK.S]) { dx -= walk_speed; }
+    if (keys[DOM_VK.W]) { dx += speed.walk; }
+    if (keys[DOM_VK.S]) { dx -= speed.walk; }
 
     // Opera sends keyCode 44 (Mozilla's DOM_VK_DELETE) for
     // both '.' and 'del'. We can't tell them apart, so just accept
@@ -654,9 +655,9 @@ var Game = function() {
     // to get '.', so also allow X/C for strafing.
 
     if (keys[DOM_VK.COMMA] || keys[DOM_VK.PRINTSCREEN] || keys[DOM_VK.X])
-      { dy -= strafe_speed; }
+      { dy -= speed.strafe; }
     if (keys[DOM_VK.PERIOD] || keys[DOM_VK.DELETE] || keys[DOM_VK.C])
-      { dy += strafe_speed; }
+      { dy += speed.strafe; }
 
     if (dx || dy)
     {
@@ -664,11 +665,11 @@ var Game = function() {
       var d = Math.sqrt(dx*dx + dy*dy);
       dx /= d;
       dy /= d;
-      walk_camera(dx*walk_speed*dt, dy*walk_speed*dt);
+      walk_camera(dx*speed.walk*dt, dy*speed.walk*dt);
     }
 
-    if (keys[DOM_VK.PAGE_UP])   { player.dh = Math.min(+self.max_vertical_look, player.dh+look_speed*dt); }
-    if (keys[DOM_VK.PAGE_DOWN]) { player.dh = Math.max(-self.max_vertical_look, player.dh-look_speed*dt); }
+    if (keys[DOM_VK.PAGE_UP])   { player.dh = Math.min(+self.max_vertical_look, player.dh+speed.look*dt); }
+    if (keys[DOM_VK.PAGE_DOWN]) { player.dh = Math.max(-self.max_vertical_look, player.dh-speed.look*dt); }
 
     if (keys[DOM_VK.SPACE]) { jump(); }
 
@@ -830,7 +831,7 @@ var Game = function() {
   const STATE_LOADING = 0;
   const STATE_PLAYING = 1;
   var game_state = STATE_LOADING;
-  self.game_tick = function(ctx, dctx, gctx, w, h, keys, dt)
+  self.game_tick = function(dctx, gctx, w, h, keys, dt)
   {
     switch (game_state)
     {
@@ -860,9 +861,9 @@ var Game = function() {
         profile_end('map');
       }
 
-      process_pending_textures(ctx);
+      self.process_pending_textures();
 
-      self.renderer.render_frame(ctx, dctx, gctx, w, h, self.camera);
+      self.renderer.render_frame(self.render_ctx, dctx, gctx, w, h, self.camera);
 
       break;
     }

@@ -2,6 +2,16 @@ module.exports = {
   physics: {
     gravity: 5
   },
+
+  player: {
+    speed: {
+      walk : 1.5,
+      strafe : 0.75,
+      turn : 1.5,
+      look : 1
+    }
+  },
+
   mipmap_max : 7,
   mipmap_min : 3,
   mipmap_enabled : 1,

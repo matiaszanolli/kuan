@@ -114,7 +114,7 @@ $(document).ready(function()
       // TODO: smoother updates, particularly on Windows where the timer
       // is limited to ~16msec resolution
 
-      game.game_tick(game.render_ctx, dctx, gctx, w, h, keys, dt);
+      game.game_tick(dctx, gctx, w, h, keys, dt);
       if (game.render_ctx !== screen_ctx)
       {
         screen_ctx.drawImage(game.render_canvas, 0, 0);
