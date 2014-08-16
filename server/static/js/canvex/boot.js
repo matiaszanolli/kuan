@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-  var game = require('./game'),
+  global.window.game = require('./game'),
   profiler_enabled = (document.getElementById('profile') !== null);
 
   // Set up the graphics system

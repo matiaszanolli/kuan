@@ -26,13 +26,7 @@ var Game = function() {
 
   self.fpsgraph_enabled = false;
 
-  self.camera = {
-    x: 0, y: 0, z: 0, // position of eye
-    dx: 0, dy: 0, // viewing direction (unit vector)
-    dh: 0, // vertical view offset
-    s: null, // current sector
-    t: 0 // current time (seconds since start of game)
-  };
+  self.camera = require('./camera');
 
   // 'wall': { name: [ { 'img': Image object, 'w': tile width, 'h': tile height }, ...(for increasing mipmaps) ] }
   // 'sprite': { name: { 'sprite':spritedef, images: [ Image object, ...(for frames of animation, then for directions) ] } }
@@ -428,7 +422,7 @@ var Game = function() {
       // Add this sprite to all sectors which contain its bounding circle.
       // TODO: change this so sprites can move
       var r = new_sprite.spritedef.sprite.radius;
-      var nearby_sectors = find_nearby_sectors(new_sprite.x, new_sprite.y, new_sprite.sector, r);
+      var nearby_sectors = self.find_nearby_sectors(new_sprite.x, new_sprite.y, new_sprite.sector, r);
       for (var i = 0; i < nearby_sectors.length; ++i)
       {
         nearby_sectors[i].sprites[s] = 1;
@@ -439,7 +433,7 @@ var Game = function() {
   }
 
 
-  function find_nearby_sectors_(x, y, sector, d, found)
+  self.find_nearby_sectors_ = function(x, y, sector, d, found)
   {
     if (found[sector.id])
     {
@@ -455,138 +449,23 @@ var Game = function() {
         var dist = point_line_distance_circle(x, y, edge.x0, edge.y0, edge.x1, edge.y1);
         if (dist <= d)
         {
-          find_nearby_sectors_(x, y, edge.dest, d, found);
+          self.find_nearby_sectors_(x, y, edge.dest, d, found);
         }
       }
     }
-  }
+  };
 
-  function find_nearby_sectors(x, y, sector, d)
+  self.find_nearby_sectors = function(x, y, sector, d)
   {
     var found = {};
-    find_nearby_sectors_(x, y, sector, d, found);
+    self.find_nearby_sectors_(x, y, sector, d, found);
     var found_sectors = [];
     for (var s in found)
     {
       found_sectors.push(sectors[s]);
     }
     return found_sectors;
-  }
-
-  // (dx,dy) is total displacement, t is time in seconds [which is relevant when we add gravity...]
-  function move_camera_by(dx, dy, t)
-  {
-    /*
-    Theoretical algorithm:
-    - Find all sectors which are 'close' (reachable from edges within r+d of camera).
-    - Construct list of edges and vertices, to collide the camera-circle against.
-      (This may get things wrong when 'close' sectors are overlapping. So limit the
-      distance 'd' to some small maximum, and tell people to not overlap nearby
-      sectors.)
-    - Push edges inwards by r and expand vertices into circles of size r,
-      then collide a camera-point against them.
-    - (Assert that d < r/2). Then move the camera to the end point, find any walls it's
-      now intersecting, and push the camera out.
-    */
-
-    var radius = player.radius;
-
-    var d = Math.sqrt(dx*dx + dy*dy);
-    var nearby_sectors = find_nearby_sectors(player.x, player.y, player.s, d+radius);
-
-    for (var s = 0; s < nearby_sectors.length; ++s)
-    {
-      for (var e = 0; e < nearby_sectors[s].edges.length; ++e)
-      {
-        var edge = nearby_sectors[s].edges[e];
-
-        // Try colliding against solid/portal wall:
-
-        // If this is a portal wall, check whether we can fit between
-        // new sector's floor and ceiling
-        if (edge.dest &&
-          (player.z+player.maxstep >= edge.dest.floor_height && player.z+player.height <= edge.dest.ceiling_height))
-        {
-          // okay - can pass
-        }
-        else
-        {
-          // Check whether we're on the inside of this edge
-          var dir = dx*(edge.y1-edge.y0) - dy*(edge.x1-edge.x0);
-          if (dir > 0)
-          {
-            // Check whether we're too close to the edge
-            var dist = point_line_distance_circle(player.x+dx, player.y+dy, edge.x0, edge.y0, edge.x1, edge.y1);
-            if (dist < radius)
-            {
-              // Push outwards along the edge's normal
-              var d = radius-dist;
-              var nx = edge.y0 - edge.y1;
-              var ny = edge.x1 - edge.x0;
-              var n = d / Math.sqrt(nx*nx + ny*ny);
-              dx += nx*n;
-              dy += ny*n;
-            }
-          }
-
-
-          // TODO: this is quite broken - it's possible to fly up the corners
-          // of objects by running into them. The stuff below doesn't
-          // actually help (now that the above look is using _circle instead of _perp),
-          // so don't bother with it.
-
-          /*
-          // Check whether we're inside circles around the edge's vertices
-          // (TODO: this does far too much redundant work)
-
-          var dist = point_distance(player.x+dx, player.y+dy, edge.x0, edge.y0);
-          if (dist < radius)
-          {
-            // Push outwards along the edge's normal
-            var d = radius-dist;
-            var nx = edge.y0 - edge.y1;
-            var ny = edge.x1 - edge.x0;
-            var n = d / Math.sqrt(nx*nx + ny*ny);
-            dx += nx*n;
-            dy += ny*n;
-          }
-
-          var dist = point_distance(player.x+dx, player.y+dy, edge.x1, edge.y1);
-          if (dist < radius)
-          {
-            // Push outwards along the edge's normal
-            var d = radius-dist;
-            var nx = edge.y0 - edge.y1;
-            var ny = edge.x1 - edge.x0;
-            var n = d / Math.sqrt(nx*nx + ny*ny);
-            dx += nx*n;
-            dy += ny*n;
-          }
-          */
-        }
-      }
-    }
-
-    // Now player.(x,y) + (dx,dy) is a valid place to be.
-
-    player.x += dx;
-    player.y += dy;
-
-    // Work out which sector it is in. (This is probably more robust than
-    // trying to work out which boundaries have been crossed, because the
-    // path dx,dy might be jumping outside the level geometry.)
-
-    var new_sectors;
-
-    for (var s = 0; s < nearby_sectors.length; ++s)
-    {
-      if (point_is_in_polygon(player.x, player.y, nearby_sectors[s]))
-      {
-        player.s = nearby_sectors[s];
-        break;
-      }
-    }
-  }
+  };
 
   self.Movement = function() {
     this.clear();
@@ -601,36 +480,11 @@ var Game = function() {
     this.set(0, 0);
   };
 
-  function rotate_camera(da)
-  {
-    var a = Math.atan2(player.dx, player.dy);
-    a -= da;
-    player.dx = Math.sin(a);
-    player.dy = Math.cos(a);
-  }
-
-  function move_camera(dx, dy)
-  {
-    var d = Math.sqrt(dx*dx + dy*dy);
-    dx /= d;
-    dy /= d;
-    var step_size = player.radius / 2;
-    while (d >= step_size)
-    {
-      move_camera_by(dx*step_size, dy*step_size, 1);
-      d -= step_size;
-    }
-    if (d > 0)
-    {
-      move_camera_by(dx*d, dy*d, 1);
-    }
-  }
-
   function walk_camera(forwards, sideways)
   {
     var dx = player.dx*forwards-player.dy*sideways;
     var dy = player.dy*forwards+player.dx*sideways;
-    move_camera(dx, dy);
+    self.camera.move(dx, dy);
   }
 
   function jump()
@@ -644,7 +498,7 @@ var Game = function() {
   self.cursor_move = new self.Movement();
 
   function process_mouse_input(dx, dt) {
-    rotate_camera(dx/10000);
+    self.camera.rotate(dx/10000);
     self.current_x = 0;
   }
 
@@ -652,8 +506,8 @@ var Game = function() {
   {
     var speed = self.options_flags.player.speed;
 
-    if (keys[DOM_VK.A]) { rotate_camera(-speed.turn*dt); }
-    if (keys[DOM_VK.D]) { rotate_camera( speed.turn*dt); }
+    if (keys[DOM_VK.A]) { self.camera.rotate(-speed.turn*dt); }
+    if (keys[DOM_VK.D]) { self.camera.rotate( speed.turn*dt); }
 
     var dx = 0, dy = 0;
     if (keys[DOM_VK.W]) { dx += speed.walk; }
@@ -698,7 +552,7 @@ var Game = function() {
       mx = Math.min(+self.max_turn_speed, mx);
     else if(mx < 0)
       mx = Math.max(-self.max_turn_speed, mx);
-    rotate_camera(mx);
+    self.camera.rotate(mx);
 
     if(my > 0)
       player.dh = Math.min(+self.max_vertical_look, player.dh - my);
@@ -714,7 +568,7 @@ var Game = function() {
 
     var r = player.radius - 0.01; // slight fudginess to prevent floating up walls
 
-    var nearby_sectors = find_nearby_sectors(player.x, player.y, player.s, r);
+    var nearby_sectors = self.find_nearby_sectors(player.x, player.y, player.s, r);
 
     for (var s = 0; s < nearby_sectors.length; ++s)
     {
@@ -782,8 +636,9 @@ var Game = function() {
     }
   }
 
-  function draw_map(ctx)
+  self.draw_map = function()
   {
+    var ctx = self.dctx;
     ctx.fillStyle = '#fffff0';
     var w = ctx.canvas.width;
     var h = ctx.canvas.height;
@@ -870,13 +725,12 @@ var Game = function() {
       if (self.dctx)
       {
         profile_begin('map');
-        draw_map(self.dctx);
+        self.draw_map();
         profile_end('map');
       }
 
       self.process_pending_textures();
 
-      //@TODO levantar render_ctx y dctx desde self
       self.renderer.render_frame(self.render_ctx, self.dctx, gctx, w, h, self.camera);
 
       break;

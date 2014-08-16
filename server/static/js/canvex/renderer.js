@@ -756,7 +756,6 @@ var Renderer = function(options_flags) {
 		return { x: camera.x+depth*ray_dx, y: camera.y+depth*ray_dy };
 	}
 
-
 	self.render_frame = function(ctx, dctx, gctx, w, h, camera)
 	{
 		// Clear the screen to black (necessary for drawing alpha-lit walls)
@@ -775,21 +774,8 @@ var Renderer = function(options_flags) {
 		if (gctx)
 		{
 			// The suggested way:
-			if (! options_flags.opera_hack)
-			{
-				gctx.lockCanvasUpdates(false);
-				gctx.updateCanvas();
-				gctx.lockCanvasUpdates(true);
-			}
-			// but that doesn't work (at least for me, with Opera 9 on Windows) - the
-			// canvas is never updated.
-			// Sometimes it helps to modify the content of an HTML element to force
-			// things to be redisplayed. But sometimes it works magically anyway. *shrug*
-			else
-			{
-				//document.getElementById('opera_hack').innerHTML = '';
-				document.getElementById('c').style.width = (document.getElementById('c').style.width == '640px' ? '639px' : '640px');
-			}
+			//document.getElementById('opera_hack').innerHTML = '';
+			document.getElementById('c').style.width = (document.getElementById('c').style.width == '640px' ? '639px' : '640px');
 		}
 	}
 
