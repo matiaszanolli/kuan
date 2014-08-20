@@ -1,4 +1,4 @@
-var level = {
+var l = {
     sprites: [{
         y: -0.03125,
         a: 3.14159265358979,
@@ -5795,4 +5795,10 @@ var level = {
         ceiling_height: 1,
         light: 1
     }]
-}
+};
+
+var Level = require('./level');
+
+var level = new Level();
+level.load(l);
+module.exports = level;

@@ -11,7 +11,8 @@ var Game = function() {
   //SET THA GAME!!
   var self = this;
 	self.options_flags = require('./options_flags');
-	var Renderer = require('./renderer');
+  var Renderer = require('./renderer');
+  level = require('./map0');
 	self.renderer = new Renderer(self.options_flags);
 
   self.max_vertical_look = 0.8;

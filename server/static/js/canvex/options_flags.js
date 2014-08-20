@@ -1,6 +1,6 @@
 module.exports = {
   physics: {
-    gravity: 5
+    gravity: 6
   },
 
   player: {
@@ -17,13 +17,13 @@ module.exports = {
   mipmap_enabled : 1,
   texture_u_repeat : 192/128,
   texture_v_repeat : 144/128,
-  floor_u_repeat : 0.5,
-  floor_v_repeat : 0.5,
+  floor_u_repeat : 5,
+  floor_v_repeat : 5,
   gradient_surfaces: 1,
   horizontal_scale: 8, // TODO: reimplement
   low_textures: 1, // TODO: reimplement
   map: 1, // TODO: reimplement
-  draw_from_canvas: 0,
+  draw_from_canvas: 1,
   draw_pattern_walls: 0, // Opera: no difference; FF1.5: no diff; FF2.0: no diff, or slightly slower?; FF3.0: ~10% slower but fixes black line between textures
   no_alpha_texture: 0,
   opera_context: 0, // doesn't work
